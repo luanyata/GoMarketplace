@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-
-import { View, Image } from 'react-native';
-
-import formatValue from '../../utils/formatValue';
+import FloatingCart from '../../components/FloatingCart';
 import { useCart } from '../../hooks/cart';
 import api from '../../services/api';
-
-import FloatingCart from '../../components/FloatingCart';
-
+import formatValue from '../../utils/formatValue';
 import {
   Container,
+  PriceContainer,
+  Product,
+  ProductButton,
   ProductContainer,
   ProductImage,
   ProductList,
-  Product,
-  ProductTitle,
-  PriceContainer,
   ProductPrice,
-  ProductButton,
+  ProductTitle,
 } from './styles';
 
 interface Product {
@@ -26,6 +22,7 @@ interface Product {
   title: string;
   image_url: string;
   price: number;
+  quantity: number;
 }
 
 const Dashboard: React.FC = () => {
@@ -35,15 +32,19 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     async function loadProducts(): Promise<void> {
-      // TODO
+      const response = await api.get('products');
+      setProducts(response.data);
     }
 
     loadProducts();
   }, []);
 
-  function handleAddToCart(item: Product): void {
-    // TODO
-  }
+  const handleAddToCart = useCallback(
+    (product: Product): void => {
+      addToCart(product);
+    },
+    [addToCart],
+  );
 
   return (
     <Container>
@@ -55,7 +56,7 @@ const Dashboard: React.FC = () => {
           ListFooterComponentStyle={{
             height: 80,
           }}
-          renderItem={({ item }) => (
+          renderItem={({ item }: { item: Product }) => (
             <Product>
               <ProductImage source={{ uri: item.image_url }} />
               <ProductTitle>{item.title}</ProductTitle>
@@ -72,6 +73,7 @@ const Dashboard: React.FC = () => {
           )}
         />
       </ProductContainer>
+
       <FloatingCart />
     </Container>
   );

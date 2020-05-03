@@ -1,31 +1,27 @@
 import React, { useMemo } from 'react';
-import FeatherIcon from 'react-native-vector-icons/Feather';
-
 import { View } from 'react-native';
-
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import { useCart } from '../../hooks/cart';
+import formatValue from '../../utils/formatValue';
 import {
-  Container,
-  ProductContainer,
-  ProductList,
-  Product,
-  ProductImage,
-  ProductTitleContainer,
-  ProductTitle,
-  ProductPriceContainer,
-  ProductSinglePrice,
-  TotalContainer,
-  ProductPrice,
-  ProductQuantity,
-  ActionContainer,
   ActionButton,
+  ActionContainer,
+  Container,
+  Product,
+  ProductContainer,
+  ProductImage,
+  ProductList,
+  ProductPrice,
+  ProductPriceContainer,
+  ProductQuantity,
+  ProductSinglePrice,
+  ProductTitle,
+  ProductTitleContainer,
+  SubtotalValue,
+  TotalContainer,
   TotalProductsContainer,
   TotalProductsText,
-  SubtotalValue,
 } from './styles';
-
-import { useCart } from '../../hooks/cart';
-
-import formatValue from '../../utils/formatValue';
 
 interface Product {
   id: string;
@@ -39,23 +35,27 @@ const Cart: React.FC = () => {
   const { increment, decrement, products } = useCart();
 
   function handleIncrement(id: string): void {
-    // TODO
+    increment(id);
   }
 
   function handleDecrement(id: string): void {
-    // TODO
+    decrement(id);
   }
 
   const cartTotal = useMemo(() => {
-    // TODO RETURN THE SUM OF THE QUANTITY OF THE PRODUCTS IN THE CART
+    const total = products.reduce((sum, { quantity, price }) => {
+      return sum + price * quantity;
+    }, 0);
 
-    return formatValue(0);
+    return formatValue(total);
   }, [products]);
 
   const totalItensInCart = useMemo(() => {
-    // TODO RETURN THE SUM OF THE QUANTITY OF THE PRODUCTS IN THE CART
+    const qtdItens = products.reduce((sum, { quantity }) => {
+      return sum + quantity;
+    }, 0);
 
-    return 0;
+    return qtdItens;
   }, [products]);
 
   return (
